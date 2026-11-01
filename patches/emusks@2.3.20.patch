@@ -1,0 +1,34 @@
+diff --git a/src/castle-browser.js b/src/castle-browser.js
+index 4c86cd4809d9b33108d283b94e28e85e580986e7..ab597f20230dcd28b4a8042b6b6c0724cbe701c7 100644
+--- a/src/castle-browser.js
++++ b/src/castle-browser.js
+@@ -40,8 +40,9 @@ export async function resolveCastleChunkUrl({ proxy } = {}) {
+       const entryUrl = html.match(/https:\/\/abs\.twimg\.com\/x-web\/x-web\/entry-client[a-z-]*-[A-Za-z0-9_-]+\.js/)?.[0];
+       if (!entryUrl) throw new Error("could not find x-web entry");
+       const entry = await get(entryUrl);
+-      const refererAsset = entry.match(/external-referer-[A-Za-z0-9_-]+\.js/)?.[0];
+-      if (!refererAsset) throw new Error("could not find external-referer chunk");
++      const refererAsset = entry.match(/external-referer-[A-Za-z0-9_-]+\.js/)?.[0]
++        ?? entry.match(/startup-dynamic-[A-Za-z0-9_-]+\.js/)?.[0];
++      if (!refererAsset) throw new Error("could not find Castle bootstrap chunk");
+       const referer = await get(`${ASSET_BASE}${refererAsset}`);
+       const castleAsset = referer.match(/castle\.umd-[A-Za-z0-9_-]+\.js/)?.[0];
+       if (!castleAsset) throw new Error("could not find castle.umd chunk");
+@@ -89,7 +90,8 @@ export async function createBrowserCastleMinter({ headless = false, chromePath,
+   }
+   const castlePk = pk ?? DEFAULT_CASTLE_PK;
+ 
+-  const sdkUrlPromise = resolveCastleChunkUrl({ proxy });
++  // Resolve before starting Chrome so rejection is handled and no orphan is launched.
++  const sdkUrl = await resolveCastleChunkUrl({ proxy });
+   const userDataDir = mkdtempSync(join(tmpdir(), "emusks-castle-"));
+ 
+   const args = [
+@@ -165,7 +167,6 @@ export async function createBrowserCastleMinter({ headless = false, chromePath,
+   };
+ 
+   await sleep(2000);
+-  const sdkUrl = await sdkUrlPromise;
+   const harness = `(() => {
+     const PK = ${JSON.stringify(castlePk)};
+     window.__ready = false; window.__error = null; window.__castleInst = null;

@@ -1,0 +1,57 @@
+{
+  "name": "scroller-office",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "bun@1.4.4",
+  "scripts": {
+    "dev": "bun run dev:convex --once && concurrently --kill-others bun:dev:web bun:dev:convex bun:dev:worker",
+    "dev:web": "vite --host localhost --port 3000 --strictPort",
+    "dev:design": "vite --config vite.design.config.ts",
+    "build:design": "vite build --config vite.design.config.ts",
+    "dev:convex": "convex dev",
+    "dev:worker": "bun run scripts/live-worker.ts",
+    "build": "vite build",
+    "start": "node .output/server/index.mjs",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p convex",
+    "check": "bun run typecheck && bun run build",
+    "convex": "convex",
+    "render:office": "bun run scripts/render-office.ts",
+    "prototype:taste": "bun run scripts/prototype-taste.ts",
+    "prototype:taste:images": "bun run scripts/prototype-taste-images.mjs",
+    "prototype:x-history": "bun run scripts/prototype-x-history.mjs",
+    "prototype:x-affinity": "bun run scripts/prototype-x-affinity.mjs",
+    "design:real-posts": "bun run scripts/design-real-posts.mjs"
+  },
+  "dependencies": {
+    "@convex-dev/better-auth": "0.12",
+    "@convex-dev/react-query": "^0.1.0",
+    "@fontsource/public-sans": "^5.3.0",
+    "@tanstack/react-query": "^5.105.1",
+    "@tanstack/react-router": "^1.170.46",
+    "@tanstack/react-router-ssr-query": "^1.167.3",
+    "@tanstack/react-start": "^1.169.4",
+    "better-auth": "1.6.15",
+    "convex": "^1.49.0",
+    "emusks": "^2.3.20",
+    "lucide-react": "^1.66.0",
+    "motion": "^14.9.0",
+    "openai": "^7.47.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.6",
+    "nitro": "^3.0.261029-rc",
+    "typescript": "5.9.3",
+    "vite": "^8.3.5"
+  },
+  "patchedDependencies": {
+    "emusks@2.3.20": "patches/emusks@2.3.20.patch"
+  }
+}

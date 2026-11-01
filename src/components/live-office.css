@@ -1,0 +1,29 @@
+.live-app .design-brand { text-decoration: none; }
+.live-app .live-sign-in { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.live-app .live-error { color: var(--negative); font-size: 13px; line-height: 1.6; text-wrap: pretty; }
+.live-app .live-field-note { color: var(--muted); font-size: 12px; }
+.live-app .live-text-button { border: 0; padding: 2px; background: transparent; color: var(--muted); font-size: 12px; }
+.live-app .live-scan-error { display: flex; flex-direction: column; align-items: center; gap: 20px; width: min(100%, 420px); }
+.live-app .live-scan-error .pill { width: 100%; }
+.live-app .live-main { padding-bottom: 64px; }
+.live-app .tweet-body > p, .live-app .quoted-tweet > p, .live-app .taste-card > p { color: var(--text); }
+.live-app .taste-card > p { font-size: 24px; line-height: 34px; }
+.live-app .completion-message > p { color: var(--muted); }
+.live-app .live-stack-tools { display: flex; align-items: center; gap: 12px; }
+.live-app .live-ready { font-size: 12px; color: var(--primary); }
+.live-app .live-office-error { margin-top: 16px; }
+.live-app[data-working='false'] .feed-track,
+.live-app[data-working='false'] .office-bot-head,
+.live-app[data-working='false'] .office-bot-body,
+.live-app[data-working='false'] .office-bot-arm { animation-play-state: paused; }
+.live-app .live-account-menu { position: relative; }
+.live-app .live-account-menu > summary { list-style: none; cursor: pointer; }
+.live-app .live-account-menu > summary::-webkit-details-marker { display: none; }
+.live-app .live-account-actions { position: absolute; bottom: 0; left: 48px; z-index: 30; display: flex; flex-direction: column; align-items: stretch; gap: 4px; min-width: 172px; padding: 8px; border: 1px solid var(--border); border-radius: 14px; background: var(--background); }
+.live-app .live-account-actions > span { padding: 8px 10px; color: var(--muted); font-size: 12px; }
+.live-app .live-account-actions > button { border: 0; padding: 10px; border-radius: 8px; text-align: left; font-size: 13px; background: transparent; }
+.live-app .live-account-actions > button:hover { background: var(--surface); }
+@media (max-width: 540px) {
+  .live-app .live-main { padding-bottom: 32px; }
+  .live-app .taste-card > p { font-size: 21px; line-height: 30px; }
+}

@@ -1,0 +1,21 @@
+.iso { --ease-in-out: cubic-bezier(.77, 0, .175, 1); }
+.office-bot-head { animation: office-bot-focus 4.8s var(--ease-in-out) infinite; }
+.office-bot-body { animation: office-bot-lean 4.8s var(--ease-in-out) infinite; }
+.office-bot-arm { animation: office-bot-type 1.6s var(--ease-in-out) infinite; }
+@keyframes office-bot-focus {
+  0%, 12%, 48%, 62%, 100% { transform: translateY(0) rotate(0); }
+  24%, 36% { transform: translateY(.6px) rotate(-2deg); }
+  76%, 86% { transform: translateY(-.4px) rotate(1.5deg); }
+}
+@keyframes office-bot-lean {
+  0%, 12%, 48%, 62%, 100% { transform: rotate(0); }
+  24%, 36% { transform: rotate(-.6deg); }
+  76%, 86% { transform: rotate(.5deg); }
+}
+@keyframes office-bot-type {
+  0%, 15%, 30%, 45%, 60%, 100% { transform: translateY(0) rotate(0); }
+  7.5%, 22.5%, 37.5%, 52.5% { transform: translateY(-1px) rotate(-3deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .office-bot-head, .office-bot-body, .office-bot-arm { animation: none; }
+}
