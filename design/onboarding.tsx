@@ -79,14 +79,12 @@ export function Onboarding({ stage, dark, onThemeChange, tasteIndex, onTasteInde
   return (
     <>
       <header className="onboarding-header">
-        <button className="design-brand" onClick={() => goToStage('welcome')} aria-label="Scroller welcome"><BrandMark /><span>scroller</span></button>
+        <button className="design-brand" onClick={() => goToStage('connect')} aria-label="Scroller home"><BrandMark /><span>scroller</span></button>
         <button className="icon-button onboarding-theme" aria-label={dark ? 'Use light mode' : 'Use dark mode'} onClick={onThemeChange}><Icon name={dark ? 'sun' : 'moon'} /></button>
       </header>
-      <main ref={main} className="onboarding-main" tabIndex={-1} aria-label={stage === 'welcome' ? 'Welcome' : stage === 'connect' ? 'Connect your account' : stage === 'scanning' ? 'Reading your taste' : 'Review your taste'}>
+      <main ref={main} className="onboarding-main" tabIndex={-1} aria-label={stage === 'connect' ? 'Connect your account' : stage === 'scanning' ? 'Reading your taste' : 'Review your taste'}>
         <AnimatePresence initial={false}>
           <StageTransition key={stage} className="onboarding-stage">
-            {stage === 'welcome' && <button className="pill primary welcome-continue" onClick={() => goToStage('connect')}><img className="google-mark" src="/google-mark.svg" width="24" height="24" alt="" aria-hidden="true" />Continue with Google</button>}
-
             {stage === 'connect' && (
               <div className="connection-cards">
                 <section className="connection-card" aria-label="Connect X">

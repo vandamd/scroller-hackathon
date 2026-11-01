@@ -3,6 +3,8 @@ dist/
 .output/
 .tanstack/
 .convex/
+.cloudflare/
+.wrangler/
 .local/
 .env
 .env.*

@@ -3,7 +3,7 @@
 A little office that reads your X feed and brings back a finite stack of good posts.
 Built during the DevDay Exchange Community Hackathon, London, 1 November 2026.
 
-Google → connect X with auth_token → scan likes and bookmarks → review your taste → read and rate a stack.
+Connect X with auth_token → scan likes and bookmarks → review your taste → read and rate a stack.
 Tanner keeps your taste, Felix finds posts and Eddie edits the stack.
 
 ## Stack
@@ -16,8 +16,8 @@ up to four concurrent model requests; there is no Parallel service dependency.
 
 ## Run locally
 
-Requires Bun 1.4.4+, Node 22.12+, a Convex development deployment, Google OAuth
-web client, an OpenAI API key with access to `gpt-6-luna`, and an X session's
+Requires Bun 1.4.4+, Node 22.12+, a Convex development deployment,
+an OpenAI API key with access to `gpt-6-luna`, and an X session's
 `auth_token`. This is an unofficial X integration; sessions can expire.
 
 ```sh
@@ -39,13 +39,13 @@ on that development deployment through the Convex dashboard:
 | --- | --- |
 | `SITE_URL` | `http://localhost:3000` |
 | `BETTER_AUTH_SECRET` | Random secret of at least 32 bytes |
-| `GOOGLE_CLIENT_ID` | Google web client ID |
-| `GOOGLE_CLIENT_SECRET` | Google web client secret |
 | `WORKER_SECRET` | Same private value as the Bun worker |
 
-In Google Auth Platform, add the authorised origin `http://localhost:3000` and
-redirect URI `http://localhost:3000/api/auth/callback/google`.
-Open the app using `localhost`, consistently with that callback.
+No Google OAuth setup is required. Submitting an X token automatically creates
+a private browser session. The worker verifies the token before reading X data;
+Convex still checks session ownership for all account reads and writes. Credentials
+remain encrypted. Reopening the same browser resumes the session; a new browser,
+expired session or signing out requires reconnecting and a fresh taste scan.
 
 ```sh
 bun run dev
@@ -90,7 +90,7 @@ bun dev:design
 ```
 
 Open [localhost:3001](http://localhost:3001). The bottom stage picker explores
-simulated Welcome, Connect, Scanning, Taste and Office screens without credentials.
+simulated Connect, Scanning, Taste and Office screens without credentials.
 Scanning waits for manual stage changes. Feedback is in memory and makes no X writes.
 The public build contains fictional posts. An optional ignored local import can
 supply real posts during private development; personal feed data is not bundled
@@ -109,11 +109,28 @@ verification, token-only login, image-aware taste synthesis and fresh For You
 judgement. The complete feedback journey needs manual verification.
 
 `bun run build` produces `.output/`; `bun run start` runs the Node server.
-For hosting, configure the public URLs at build time and private encryption key
-on the server. Run the Bun worker as a persistent process with the same encryption
-key and worker secret. Update Google's origin/callback and Convex `SITE_URL` for
-the hosted origin. Use separate development and hosted deployments so their auth
-origins do not interfere. This project has not been deployed to production.
+The hackathon deployment uses Cloudflare Worker `scroller` at
+[scroller.vandamdinh.com](https://scroller.vandamdinh.com), sharing the existing
+Convex development deployment as requested. Local testing currently takes
+priority: `SITE_URL` on Convex points to `http://localhost:3000`, and
+`ADDITIONAL_TRUSTED_ORIGINS` includes the hosted origin. Auth resolves the
+request's origin from this allowlist so each site uses its own browser session.
+
+```sh
+bun run build:cloudflare
+cf deploy --prebuilt --secrets-file /path/to/private-secrets.json
+```
+
+The private JSON file contains only `X_SESSION_ENCRYPTION_KEY`, matching the Bun
+worker's key. Never commit it. `cloudflare.config.ts` declares public bindings;
+`scripts/package-cloudflare.ts` packages Nitro's Cloudflare output for the `cf`
+CLI. The uploaded assets contain no private design imports or environment files.
+
+The native X worker currently runs locally with `bun run dev:worker`, using the
+same encryption key, worker secret and Convex deployment. It must remain running
+on an awake machine for new scans, feed preparation and X likes. Cloudflare serves
+the web app; the native worker still needs a persistent Bun host for unattended
+operation. OpenAI credentials stay on that worker, not on the public web app.
 
 ## Demo and credits
 

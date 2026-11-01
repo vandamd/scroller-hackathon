@@ -8,7 +8,7 @@ export const connectX = createServerFn({ method: 'POST' })
   .validator((value: unknown) => xCredentialsSchema.parse(value))
   .handler(async ({ data }) => {
     const user = await fetchAuthQuery(api.auth.getCurrentUser)
-    if (!user) throw new Error('Sign in before connecting X')
+    if (!user) throw new Error('Your session has expired. Please reconnect X.')
     const { sealCredentials } = await import('../server/credential-box')
     const connect = makeFunctionReference<'mutation', { sealedCredentials: string }, null>('live:connect')
     await fetchAuthMutation(connect, { sealedCredentials: sealCredentials(data) })

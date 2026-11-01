@@ -36,30 +36,34 @@ function OnboardingHeader({ dark, onThemeChange }: { dark: boolean; onThemeChang
   </header>
 }
 
-export function LiveWelcome({ signInError = false }: { signInError?: boolean }) {
+export function LiveWelcome() {
   const { dark, toggle } = useTheme()
   const [pending, setPending] = useState(false)
-  const [error, setError] = useState(signInError ? 'Google sign-in didn’t finish. Please try again.' : '')
-  async function signIn() {
+  const [error, setError] = useState('')
+  async function connectAccount(authToken: string) {
+    if (pending) return
     setPending(true)
     setError('')
     try {
-      const result = await authClient.signIn.social({ provider: 'google', callbackURL: '/office', errorCallbackURL: '/?error=sign-in' })
-      if (result.error) throw new Error('Sign-in failed')
-    } catch { setError('Google sign-in couldn’t start. Please try again.'); setPending(false) }
+      const session = await authClient.getSession()
+      if (session.error) throw new Error('Couldn’t check your session')
+      if (!session.data) {
+        const result = await authClient.signIn.anonymous()
+        if (result.error) throw new Error('Couldn’t start your session')
+      }
+      await connectX({ data: { mode: 'session', authToken } })
+      window.location.assign('/office')
+    } catch { setError('Couldn’t connect X. Check your auth_token and try again.'); setPending(false) }
   }
   return <div className="playground live-app" data-theme={dark ? 'dark' : 'light'}>
     <OnboardingHeader dark={dark} onThemeChange={toggle} />
-    <main className="onboarding-main" aria-label="Sign in">
-      <div className="live-sign-in">
-        <button className="pill primary welcome-continue" disabled={pending} onClick={signIn}><img className="google-mark" src="/google-mark.svg" width="24" height="24" alt="" />{pending ? 'Opening Google…' : 'Continue with Google'}</button>
-        {error && <p className="live-error" role="alert">{error}</p>}
-      </div>
+    <main className="onboarding-main" aria-label="Connect X">
+      <Connection error={error} pending={pending} onConnect={authToken => void connectAccount(authToken)} />
     </main>
   </div>
 }
 
-function Connection({ error, onConnect }: { error: string | null; onConnect: (authToken: string) => void }) {
+function Connection({ error, pending = false, onConnect }: { error: string | null; pending?: boolean; onConnect: (authToken: string) => void }) {
   const [authToken, setAuthToken] = useState('')
   function connect(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -67,10 +71,10 @@ function Connection({ error, onConnect }: { error: string | null; onConnect: (au
     setAuthToken('')
   }
   return <div className="connection-cards">
-    <form className="connection-card" aria-label="Connect X" onSubmit={connect}>
+    <form className="connection-card" aria-label="Connect X" aria-busy={pending} onSubmit={connect}>
       <div className="connection-heading"><Icon name="twitter" width="25" height="25" /></div>
-        <label className="connection-field">auth_token<input name="auth-token" type="password" autoComplete="off" spellCheck={false} value={authToken} onChange={event => setAuthToken(event.target.value)} placeholder="Your X auth_token" required minLength={20} maxLength={500} /></label>
-      <button className="pill primary" type="submit" aria-label="Connect X">Connect<Icon name="twitter" width="18" height="18" /></button>
+        <label className="connection-field">auth_token<input name="auth-token" type="password" autoComplete="off" spellCheck={false} value={authToken} onChange={event => setAuthToken(event.target.value)} placeholder="Your X auth_token" required minLength={20} maxLength={500} disabled={pending} /></label>
+      <button className="pill primary" type="submit" aria-label="Connect X" disabled={pending}>{pending ? 'Connecting…' : 'Connect'}<Icon name="twitter" width="18" height="18" /></button>
       {error && <p className="live-error" role="alert">{error}</p>}
     </form>
     <button className="connection-soon" disabled><span className="connection-heading"><Icon name="instagram" width="24" height="24" />Instagram</span><span>Coming soon</span></button>
@@ -177,6 +181,7 @@ function OfficeDashboard({ view, dark, onThemeChange, onDisconnect, externalErro
   async function signOut() {
     setPending(true)
     try {
+      if (await onDisconnect() === false) throw new Error('Disconnect failed')
       const result = await authClient.signOut()
       if (result.error) throw new Error('Sign out failed')
       window.location.assign('/')
@@ -257,7 +262,7 @@ export function LiveOffice() {
   }
   async function leaveX() {
     setPending(true); setError('')
-    try { await disconnect({}) } catch { setError('Couldn’t disconnect X. Please try again.') }
+    try { await disconnect({}); return true } catch { setError('Couldn’t disconnect X. Please try again.'); return false }
     finally { setPending(false) }
   }
   async function retryScan() {

@@ -67,8 +67,6 @@ button, code { font-family: inherit; }
 .onboarding-theme { position: absolute; right: 24px; }
 .onboarding-main { min-height: 100svh; padding: 112px 24px; display: grid; place-items: center; outline: none; }
 .onboarding-stage { grid-area: 1 / 1; width: 100%; min-width: 0; display: flex; justify-content: center; }
-.welcome-continue { width: 244px; min-height: 48px; font-size: 15px; }
-.google-mark { display: block; width: 24px; height: 24px; flex-shrink: 0; }
 .connection-cards { width: min(100%, 412px); display: flex; flex-direction: column; gap: 16px; }
 .connection-card { display: flex; flex-direction: column; gap: 24px; padding: 28px; border: 1px solid var(--border); border-radius: 16px; background: var(--background); }
 .connection-heading { display: flex; align-items: center; gap: 12px; font-size: 18px; line-height: 26px; }

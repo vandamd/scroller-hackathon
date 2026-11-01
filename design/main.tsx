@@ -88,7 +88,7 @@ function Playground() {
           ) : (
             <StageTransition key="office" className="stage-view">
               <aside className="design-sidebar" aria-label="Sidebar">
-                <button className="sidebar-brand" onClick={() => goToStage('welcome')} aria-label="Scroller welcome"><BrandMark size={27} /></button>
+                <button className="sidebar-brand" onClick={() => goToStage('connect')} aria-label="Scroller home"><BrandMark size={27} /></button>
                 <nav className="sidebar-navigation" aria-label="Main navigation">
                   <a className="icon-button sidebar-current" href="#office" aria-label="Office" aria-current="page" title="Office"><Icon name="home" /></a>
                 </nav>

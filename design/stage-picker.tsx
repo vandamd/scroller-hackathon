@@ -1,5 +1,4 @@
 export const designStages = [
-  { id: 'welcome', label: 'Welcome' },
   { id: 'connect', label: 'Connect X' },
   { id: 'scanning', label: 'Scanning' },
   { id: 'taste', label: 'Your taste' },
@@ -10,7 +9,7 @@ export type DesignStage = typeof designStages[number]['id']
 
 export function getStage(): DesignStage {
   const value = new URLSearchParams(window.location.search).get('stage')
-  return designStages.find(stage => stage.id === value)?.id ?? 'welcome'
+  return designStages.find(stage => stage.id === value)?.id ?? 'connect'
 }
 
 export function subscribeToStage(onChange: () => void) {
